@@ -1,26 +1,22 @@
-// import postgres from 'postgres';
-
-// const sql = postgres(process.env.POSTGRES_URL!, { ssl: 'require' });
-
-// async function listInvoices() {
-// 	const data = await sql`
-//     SELECT invoices.amount, customers.name
-//     FROM invoices
-//     JOIN customers ON invoices.customer_id = customers.id
-//     WHERE invoices.amount = 666;
-//   `;
-
-// 	return data;
-// }
+import { sql } from '@vercel/postgres'; // or from your postgres setup
+import { NextResponse } from 'next/server';
 
 export async function GET() {
-  return Response.json({
-    message:
-      'Uncomment this file and remove this line. You can delete this file when you are finished.',
-  });
-  // try {
-  // 	return Response.json(await listInvoices());
-  // } catch (error) {
-  // 	return Response.json({ error }, { status: 500 });
-  // }
+  try {
+    const data = await sql`
+      SELECT amount, customers.name
+      FROM invoices
+      JOIN customers ON invoices.customer_id = customers.id
+      LIMIT 1
+    `;
+
+    return NextResponse.json({ data });
+  } catch (error) {
+    return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
+  }
 }
+
+
+
+
+
